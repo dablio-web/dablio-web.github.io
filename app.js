@@ -77,7 +77,7 @@ function openPopover(anchor){
   const rect=anchor.getBoundingClientRect(),boxWidth=Math.min(300,innerWidth-32);let left=rect.right+16;if(left+boxWidth>innerWidth-16)left=rect.left-boxWidth-16;left=Math.max(16,Math.min(left,innerWidth-boxWidth-16));let top=Math.max(16,Math.min(rect.top-8,innerHeight-220));popover.style.left=`${left}px`;popover.style.top=`${top}px`;
 }
 stickers.forEach(item=>item.addEventListener("click",e=>{
-  if(!item.matches(".s-plane,.s-football,.s-sun,.s-camera"))replayIconAnimation(item);
+  if(!item.matches(".s-plane,.s-football,.s-sun,.s-camera,.s-dog,.s-brazil"))replayIconAnimation(item);
   if(item.matches("a.linked")){e.preventDefault();e.stopPropagation();openPopover(item)}
 }));
 popoverClose.addEventListener("click",closePopover);popover.addEventListener("click",e=>e.stopPropagation());document.addEventListener("click",e=>{if(!e.target.closest("a.linked"))closePopover()});addEventListener("keydown",e=>{if(e.key==="Escape")closePopover()});
@@ -165,8 +165,8 @@ $("#polaroid-gallery").addEventListener("click",()=>{galleryIndex=(galleryIndex+
 $(".s-macbook").addEventListener("click",()=>openModal("contact-modal"));
 $(".s-dino").addEventListener("click",()=>openModal("error-modal"));
 $(".s-controller").addEventListener("click",()=>openModal("game-modal"));
-sun.addEventListener("click",()=>{sun.classList.remove("spinning");void sun.offsetWidth;sun.classList.add("spinning");setTimeout(()=>sun.classList.remove("spinning"),920)});
-gym.addEventListener("click",()=>{reps++;resetRepsAfterRest();$("#rep-counter").textContent=`${reps} ${reps===1?"REP":"REPS"}`;gym.classList.remove("pumping");void gym.offsetWidth;gym.classList.add("pumping");showToast(`REP ${reps}  💪`);setTimeout(()=>gym.classList.remove("pumping"),1900)});
+sun.addEventListener("click",()=>sun.classList.toggle("spinning"));
+gym.addEventListener("click",()=>{reps++;resetRepsAfterRest();$("#rep-counter").textContent=`${reps} ${reps===1?"REP":"REPS"}`;showToast(`REP ${reps}  💪`)});
 football.addEventListener("click",()=>{football.classList.remove("goal-flight");$("#goal-banner").classList.remove("active");void football.offsetWidth;football.classList.add("goal-flight");$("#goal-banner").classList.add("active");setTimeout(()=>{football.classList.remove("goal-flight");$("#goal-banner").classList.remove("active")},1750)});
 
 const effectToast=$("#effect-toast");

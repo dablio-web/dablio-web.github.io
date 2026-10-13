@@ -122,7 +122,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:ra
 .collage>.brand-stamp,.collage>.visitor-pill,.collage>.guestbook-dock{position:absolute}
 .collage>.brand-stamp{top:22px;left:24px}
 .collage>.visitor-pill{top:34px;left:50%}
-.collage>.guestbook-dock{right:22px;bottom:92px}
+.collage>.guestbook-dock{right:-240px;bottom:76px;z-index:6}
 .sticker,.portrait-wrap,.glasses-wrap,.brand-stamp,.visitor-pill,.availability,.guestbook-dock{will-change:transform;backface-visibility:hidden}
 .sticker.is-dragging{transform:translate3d(var(--drag-x,0px),var(--drag-y,0px),0) rotate(var(--r,0deg))!important;filter:drop-shadow(0 22px 25px rgba(0,0,0,.72));animation:none!important}
 .portrait-wrap.is-dragging{transform:translate(calc(-50% + var(--drag-x,0px)),calc(18px + var(--drag-y,0px))) scale(.92)!important;animation:none!important}
@@ -134,12 +134,12 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:ra
 /* Every reaction returns to its exact resting transform, with no opacity jump. */
 .sticker.icon-pop{animation:icon-click-fluid .62s cubic-bezier(.2,.8,.2,1) both}
 .s-plane.flying{animation:plane-flight-fluid 1.5s cubic-bezier(.3,.05,.25,1) both!important}
-.s-sun.spinning{animation:sun-loop-fluid .9s cubic-bezier(.25,.7,.25,1) 1 both!important}
+.s-sun.spinning{animation:sun-loop-fluid 1.2s linear infinite!important}
 .s-football.goal-flight{animation:ball-flight-fluid 1.7s cubic-bezier(.2,.65,.28,1) 1 both!important}
 @keyframes icon-click-fluid{0%{transform:translate3d(var(--drag-x,0px),var(--drag-y,0px),0) rotate(var(--r,0deg)) scale(1)}34%{transform:translate3d(var(--drag-x,0px),calc(var(--drag-y,0px) - 14px),0) rotate(calc(var(--r,0deg) + 8deg)) scale(1.16)}72%{transform:translate3d(var(--drag-x,0px),calc(var(--drag-y,0px) + 2px),0) rotate(calc(var(--r,0deg) - 2deg)) scale(.98)}100%{transform:translate3d(var(--drag-x,0px),var(--drag-y,0px),0) rotate(var(--r,0deg)) scale(1)}}
-@keyframes plane-flight-fluid{0%{transform:translate3d(var(--drag-x,0px),var(--drag-y,0px),0) rotate(-12deg) scale(1)}38%{transform:translate3d(calc(var(--drag-x,0px) + 56vw),calc(var(--drag-y,0px) - 40vh),0) rotate(8deg) scale(1.1)}66%{transform:translate3d(calc(var(--drag-x,0px) + 34vw),calc(var(--drag-y,0px) + 12vh),0) rotate(20deg) scale(.92)}84%{transform:translate3d(calc(var(--drag-x,0px) + 9vw),calc(var(--drag-y,0px) + 4vh),0) rotate(-18deg) scale(.97)}100%{transform:translate3d(var(--drag-x,0px),var(--drag-y,0px),0) rotate(-12deg) scale(1)}}
+@keyframes plane-flight-fluid{0%{transform:translate3d(var(--drag-x,0px),var(--drag-y,0px),0) rotate(-12deg) scale(1)}43%{transform:translate3d(calc(var(--drag-x,0px) + 115vw),calc(var(--drag-y,0px) - 34vh),0) rotate(6deg) scale(1.08)}43.1%{transform:translate3d(calc(var(--drag-x,0px) - 115vw),calc(var(--drag-y,0px) + 24vh),0) rotate(-8deg) scale(.9)}76%{transform:translate3d(calc(var(--drag-x,0px) - 28vw),calc(var(--drag-y,0px) + 8vh),0) rotate(-4deg) scale(.96)}100%{transform:translate3d(var(--drag-x,0px),var(--drag-y,0px),0) rotate(-12deg) scale(1)}}
 @keyframes sun-loop-fluid{0%{transform:translate3d(var(--drag-x,0px),var(--drag-y,0px),0) rotate(-4deg)}100%{transform:translate3d(var(--drag-x,0px),var(--drag-y,0px),0) rotate(356deg)}}
-@keyframes ball-flight-fluid{0%{transform:translate3d(var(--drag-x,0px),var(--drag-y,0px),0) rotate(8deg) scale(1)}42%{transform:translate3d(calc(var(--drag-x,0px) - 64vw),calc(var(--drag-y,0px) - 58vh),0) rotate(-700deg) scale(.62)}66%{transform:translate3d(calc(var(--drag-x,0px) - 37vw),calc(var(--drag-y,0px) + 10vh),0) rotate(-1040deg) scale(.74)}86%{transform:translate3d(calc(var(--drag-x,0px) - 8vw),calc(var(--drag-y,0px) + 3vh),0) rotate(-1370deg) scale(.94)}100%{transform:translate3d(var(--drag-x,0px),var(--drag-y,0px),0) rotate(-1432deg) scale(1)}}
+@keyframes ball-flight-fluid{0%{opacity:1;transform:translate3d(var(--drag-x,0px),var(--drag-y,0px),0) rotate(8deg) scale(1)}72%{opacity:1;transform:translate3d(calc(var(--drag-x,0px) - 112vw),calc(var(--drag-y,0px) - 68vh),0) rotate(-1080deg) scale(.55)}72.1%,99%{opacity:0;transform:translate3d(var(--drag-x,0px),var(--drag-y,0px),0) rotate(8deg) scale(1)}100%{opacity:1;transform:translate3d(var(--drag-x,0px),var(--drag-y,0px),0) rotate(8deg) scale(1)}}
 
 /* Compact audio-only presentation powered by the official player. */
 .music-modal{width:min(450px,92vw);padding:28px!important;overflow:hidden}
@@ -160,8 +160,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:ra
 .polaroid-gallery{padding:12px!important}.polaroid-gallery img{margin:0!important}.gallery-hint{display:none!important}
 
 /* A playful front door before the wall appears. */
-.entry-screen{position:fixed;inset:0;z-index:220;display:grid;place-items:center;overflow:hidden;pointer-events:none;background:#050505;background-image:linear-gradient(rgba(255,255,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.08) 1px,transparent 1px);background-size:42px 42px;transition:opacity .65s ease,visibility .65s ease;isolation:isolate}
-.entry-screen::before{content:"";position:absolute;width:min(78vw,850px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(164,77,255,.24),transparent 64%);animation:intro-breathe 3.2s ease-in-out infinite}
+.entry-screen{position:fixed;inset:0;z-index:220;display:grid;place-items:center;overflow:hidden;pointer-events:none;background-color:var(--bg);background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:48px 48px;background-position:50% 50%;transition:opacity .65s ease,visibility .65s ease;isolation:isolate}
 .entry-screen.leaving{opacity:0;visibility:hidden;pointer-events:none}.entry-screen.leaving .entry-copy{transform:scale(1.12);filter:blur(6px)}
 .entry-copy{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;width:min(520px,88vw);text-align:center;transition:transform .65s ease,filter .65s ease}
 .entry-route{margin-bottom:20px;color:#aaa;font-size:9px;letter-spacing:.22em}.entry-route b{color:var(--yellow)}
@@ -175,7 +174,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background:ra
   :root{--card-w:min(88vw,420px);--card-h:38vh}
   .collage>.brand-stamp{left:18px;top:20px;width:105px}
   .collage>.visitor-pill{left:50%;top:82px;padding:9px 12px;font-size:8px}
-  .collage>.guestbook-dock{display:block;right:-20px;bottom:68px;width:245px;--guestbook-scale:.62}
+  .collage>.guestbook-dock{display:block;right:-90px;bottom:68px;width:245px;--guestbook-scale:.62;z-index:6}
   .dock-book{height:155px}.dock-nav small,.dock-title button{display:none}
   .portrait-wrap{top:16%;width:min(48vw,220px)}.glasses-wrap{top:calc(16% + 11vw);width:min(31vw,145px)}
   .deck{top:54%;width:88vw;height:39vh;min-height:245px;transform:translate(-50%,-25%)}.active-card{padding:24px}.active-card h1{font-size:20px}.body-copy{font-size:10px;line-height:1.5}.eyebrow{font-size:8px}.card-cta{margin-top:14px}
