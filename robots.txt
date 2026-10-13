@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://dablio.denerfut.chatgpt.site/sitemap.xml
+Sitemap: https://dablio-web.github.io/sitemap.xml
