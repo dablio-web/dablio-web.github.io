@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#050505" />
+    <meta name="description" content="DablioWW é o portfólio interativo de Wander Guimarães, Web & UI Designer brasileiro no Porto, especializado em interfaces, marcas e websites." />
+    <meta name="author" content="Wander Guimarães" />
+    <meta name="creator" content="Wander Guimarães" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href="https://dablio.denerfut.chatgpt.site/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_PT" />
+    <meta property="og:site_name" content="DablioWW" />
+    <meta property="og:title" content="DablioWW" />
+    <meta property="og:description" content="Portfólio interativo de Wander Guimarães: Web & UI Design, branding e experiências digitais criadas entre o Brasil e Portugal." />
+    <meta property="og:url" content="https://dablio.denerfut.chatgpt.site/" />
+    <meta property="og:image" content="https://dablio.denerfut.chatgpt.site/assets/wander-cap.webp" />
+    <meta property="og:image:alt" content="Retrato de Wander Guimarães, criador do DablioWW" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="DablioWW" />
+    <meta name="twitter:description" content="Web & UI Design, branding e experiências digitais por Wander Guimarães." />
+    <meta name="twitter:image" content="https://dablio.denerfut.chatgpt.site/assets/wander-cap.webp" />
+    <title>DablioWW</title>
+    <link rel="icon" type="image/png" href="./assets/favicon.png" />
+    <link rel="apple-touch-icon" href="./assets/favicon.png" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Wander Guimarães",
+        "alternateName": "DablioWW",
+        "url": "https://dablio.denerfut.chatgpt.site/",
+        "image": "https://dablio.denerfut.chatgpt.site/assets/wander-cap.webp",
+        "jobTitle": "Web & UI Designer",
+        "homeLocation": { "@type": "Place", "name": "Porto, Portugal" },
+        "sameAs": [
+          "https://www.youtube.com/@dablio_wg",
+          "https://pt.linkedin.com/in/wandersantosmkt/en",
+          "https://www.instagram.com/dabliowg_/reels/",
+          "https://www.behance.net/wandersant"
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <div class="entry-screen" id="entry-screen" role="dialog" aria-modal="true" aria-label="Enter Dablio's portfolio">
+      <div class="entry-orbit" aria-hidden="true">
+        <span class="entry-orbit-ring"></span>
+        <span class="entry-orbit-dot entry-orbit-dot-a"></span>
+        <span class="entry-orbit-dot entry-orbit-dot-b"></span>
+        <span class="entry-orbit-dot entry-orbit-dot-c"></span>
+      </div>
+      <div class="entry-copy">
+        <span class="entry-route">BRASIL <b>→</b> PORTO</span>
+        <h1 id="entry-logo" aria-label="{dablio;}"></h1>
+        <p>A draggable corner of the internet.</p>
+        <div class="entry-status">LOADING THE WALL <b>↗</b></div>
+        <div class="entry-progress" aria-hidden="true"><span></span></div>
+        <small>MOVE THINGS · CLICK EVERYTHING</small>
+      </div>
+    </div>
+    <svg id="draw-canvas" aria-hidden="true"><g id="draw-paths"></g></svg>
+    <div class="noise" aria-hidden="true"></div>
+
+    <main class="stage" aria-live="polite">
+      <div class="visitor-pill" aria-label="Portfolio location">
+        <span class="pulse"></span>
+        <span>Brazilian mind · Porto base</span>
+      </div>
+
+      <div class="brand-stamp" aria-hidden="true">
+        <img src="./assets/dablio-code.webp" alt="" />
+      </div>
+
+      <section class="collage" aria-label="Dablio's interactive portfolio">
+        <a class="sticker s-linkedin linked" href="https://pt.linkedin.com/in/wandersantosmkt/en" target="_blank" rel="noreferrer" aria-label="Open LinkedIn"><img src="./assets/linkedin.webp" alt="LinkedIn" /></a>
+        <a class="sticker s-youtube linked" href="https://www.youtube.com/@dablio_wg" target="_blank" rel="noreferrer" aria-label="Open YouTube"><img src="./assets/youtube.webp" alt="YouTube" /></a>
+        <a class="sticker s-behance linked" href="https://www.behance.net/wandersant" target="_blank" rel="noreferrer" aria-label="Open Behance"><img src="./assets/behance.webp" alt="Behance" /></a>
+        <a class="sticker s-instagram linked" href="https://www.instagram.com/dabliowg_/reels/" target="_blank" rel="noreferrer" aria-label="Open Instagram"><img src="./assets/instant-camera.webp" alt="Instagram" /></a>
+
+        <img class="sticker s-brazil" src="./assets/brazil.webp" alt="Brazilian" />
+        <img class="sticker s-plane" src="./assets/plane.webp" alt="Travel" />
+        <img class="sticker s-football" src="./assets/football.webp" alt="Football" />
+        <img class="sticker s-controller" src="./assets/controller.webp" alt="Video games" />
+        <img class="sticker s-headphones" src="./assets/headphones.webp" alt="Music" />
+        <img class="sticker s-camera" src="./assets/camera.webp" alt="Visual design" />
+        <span class="rep-counter" id="rep-counter" aria-live="polite">0 REPS</span>
+        <img class="sticker s-macbook" src="./assets/macbook.webp" alt="Web design" />
+        <img class="sticker s-palm" src="./assets/palm.webp" alt="Sun and travel" />
+        <img class="sticker s-dino" src="./assets/dino.webp" alt="Offline dinosaur" />
+        <img class="sticker s-sun" src="./assets/sun.webp" alt="Sun" />
+        <img class="sticker s-polaroid" src="./assets/polaroid.webp" alt="A travel memory" />
+        <img class="sticker s-dog" src="./assets/dog.webp" alt="Dog" />
+
+        <div class="name-tag" aria-hidden="true">DABLIOWW.exe</div>
+        <div class="role-tag" aria-hidden="true">WEB / UI / VISUAL</div>
+        <div class="availability" aria-hidden="true"><span></span> OPEN TO COOL PROJECTS</div>
+
+        <div class="portrait-wrap" aria-hidden="true">
+          <img class="portrait portrait-casual" src="./assets/wander-cap.webp" alt="" />
+        </div>
+        <div class="glasses-wrap" aria-hidden="true">
+          <img class="pixel-glasses" src="./assets/pixel-glasses.webp" alt="" />
+        </div>
+
+        <article class="deck" aria-label="About Wander">
+          <div class="ghost-card g4"></div><div class="ghost-card g3"></div><div class="ghost-card g2"></div><div class="ghost-card g1"></div>
+          <div class="card active-card">
+            <p class="eyebrow" id="eyebrow"></p>
+            <h1 id="typed-title"></h1>
+            <p class="body-copy" id="typed-body"></p>
+            <a class="card-cta" id="card-cta" href="#">Explore <span>↗</span></a>
+          </div>
+        </article>
+      </section>
+
+      <aside class="social-popover" id="social-popover" role="dialog" aria-live="polite" hidden>
+        <button class="popover-close" id="popover-close" type="button" aria-label="Close">×</button>
+        <span class="popover-kicker">LINK OUT</span>
+        <strong id="popover-title">LinkedIn</strong>
+        <p id="popover-copy"></p>
+        <a id="popover-link" href="#" target="_blank" rel="noreferrer">Open profile <span>↗</span></a>
+      </aside>
+
+      <div class="zoom-tools" aria-label="Zoom controls">
+        <button id="zoom-out" type="button" aria-label="Zoom out">−</button>
+        <span id="zoom-label">100%</span>
+        <button id="zoom-in" type="button" aria-label="Zoom in">+</button>
+      </div>
+
+      <aside class="guestbook-dock" id="guestbook-dock" aria-label="Open guestbook">
+        <div class="dock-title">GUESTBOOK <button id="dock-expand" type="button">EXPAND ↗</button></div>
+        <div class="dock-book" id="dock-book" role="button" tabindex="0" aria-label="Turn to the next guestbook page">
+          <div class="dock-page dock-left"><span>BRASIL<br>↓<br>PORTO</span><small>WELCOME TO<br>DABLIO'S WALL</small></div>
+          <div class="dock-page dock-right">
+            <time id="dock-date"></time>
+            <p id="dock-message"></p>
+            <strong id="dock-author"></strong>
+          </div>
+        </div>
+        <div class="dock-nav"><span id="dock-counter"></span><small>CLICK THE BOOK TO TURN</small></div>
+      </aside>
+
+      <button class="guestbook-launch" id="guestbook-launch" type="button">
+        <span>✦</span> GUESTBOOK <b id="guestbook-count">0</b>
+      </button>
+
+      <div class="modal-layer" id="modal-layer" hidden>
+        <section class="site-modal contact-modal" id="contact-modal" role="dialog" aria-modal="true" aria-labelledby="contact-title" hidden>
+          <button class="modal-close" type="button" aria-label="Close">×</button>
+          <h2 id="contact-title">Drop me a line</h2>
+          <p>I usually reply within 24 hours.</p>
+          <form id="contact-form">
+            <label>Email<input id="contact-email" type="email" autocomplete="email" placeholder="you@example.com" required /></label>
+            <label>Message<textarea id="contact-message" placeholder="What's on your mind?" maxlength="700" required></textarea></label>
+            <button class="send-btn" type="submit">Send <span>↗</span></button>
+          </form>
+        </section>
+
+        <section class="site-modal guestbook-modal" id="guestbook-modal" role="dialog" aria-modal="true" aria-labelledby="guestbook-title" hidden>
+          <button class="modal-close" type="button" aria-label="Close">×</button>
+          <div class="guestbook-heading">
+            <div><p class="modal-kicker">DABLIOWW VISITOR BOOK</p><h2 id="guestbook-title">Guestbook</h2></div>
+            <button class="book-sign-toggle" id="book-sign-toggle" type="button">SIGN THE BOOK <span>✎</span></button>
+          </div>
+          <div class="guestbook-book" id="guestbook-book" role="button" tabindex="0" aria-label="Turn to the next guestbook page">
+            <div class="book-page book-page-left">
+              <span class="book-page-no">1</span>
+              <div class="book-doodle">☀︎<br><b>BRASIL</b><br>↘<br><b>PORTO</b></div>
+              <p>Design, football, games, trips and a Brazilian mind building things in Portugal.</p>
+              <small>DRAG THINGS AROUND.<br>CLICK EVERYTHING.</small>
+            </div>
+            <div class="book-spine" aria-hidden="true"></div>
+            <div class="book-page book-page-right" id="book-page" aria-live="polite">
+              <time id="book-date"></time>
+              <p id="book-message"></p>
+              <strong id="book-author"></strong>
+              <span class="book-page-no" id="book-page-no">2</span>
+            </div>
+          </div>
+          <div class="book-nav"><span id="book-counter">1 / 3</span><small>CLICK THE BOOK TO TURN THE PAGE</small></div>
+          <form id="guestbook-form" class="guestbook-form" hidden>
+            <input id="guest-name" placeholder="Your name" maxlength="24" required />
+            <textarea id="guest-message" placeholder="Leave a short message…" maxlength="140" required></textarea>
+            <button class="send-btn" type="submit">Add page <span>✦</span></button>
+          </form>
+        </section>
+
+        <section class="site-modal music-modal" id="music-modal" role="dialog" aria-modal="true" aria-labelledby="music-title" hidden>
+          <button class="modal-close" type="button" aria-label="Close">×</button>
+          <p class="modal-kicker">NOW PLAYING · OFFICIAL AUDIO</p>
+          <div class="vinyl-stage">
+            <button class="vinyl-disc" id="music-toggle" type="button" aria-label="Pause Yukon">
+              <span class="vinyl-label"><img src="./assets/wander-cap.webp" alt="" /></span>
+            </button>
+            <div class="audio-meta">
+              <h2 id="music-title">YUKON</h2>
+              <p>Justin Bieber</p>
+              <div class="audio-wave" aria-hidden="true">
+                <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+              </div>
+              <span class="audio-state" id="audio-state">PLAYING · TAP THE RECORD TO PAUSE</span>
+            </div>
+          </div>
+          <div class="audio-engine" id="music-player" aria-hidden="true"></div>
+        </section>
+
+        <section class="site-modal photo-modal" id="photo-modal" role="dialog" aria-modal="true" aria-label="Wander's travel memories" hidden>
+          <button class="modal-close" type="button" aria-label="Close">×</button>
+          <button class="polaroid-gallery" id="polaroid-gallery" type="button" aria-label="Show the next photo">
+            <img id="gallery-image" src="./assets/gallery-desert.jpg" alt="Wander riding a camel in the desert" />
+          </button>
+        </section>
+
+        <section class="site-modal error-modal" id="error-modal" role="dialog" aria-modal="true" aria-labelledby="error-title" hidden>
+          <button class="modal-close" type="button" aria-label="Close">×</button>
+          <div class="error-code">404</div>
+          <h2 id="error-title">Dino found. Internet not found.</h2>
+          <p>Good news: the portfolio still works offline-ish.</p>
+          <button class="send-btn modal-dismiss" type="button">Try again</button>
+        </section>
+
+        <section class="site-modal game-modal" id="game-modal" role="dialog" aria-modal="true" aria-labelledby="game-title" hidden>
+          <button class="modal-close" type="button" aria-label="Close">×</button>
+          <p class="modal-kicker">DABLIO ARCADE</p>
+          <h2 id="game-title">Mini Tetris</h2>
+          <p>Stack the pieces. Clear lines. Keep the wall alive.</p>
+          <div class="tetris-layout">
+            <canvas id="tetris-canvas" width="200" height="300" aria-label="Tetris board"></canvas>
+            <div class="tetris-side">
+              <div class="game-score">SCORE <strong id="game-score">0</strong><br>LINES <strong id="game-lines">0</strong></div>
+              <p class="tetris-status" id="tetris-status" aria-live="polite">Press start when you're ready.</p>
+              <button class="send-btn" id="game-start" type="button">Start game</button>
+              <div class="tetris-controls">
+                <button type="button" data-tetris="left" aria-label="Move left">←</button>
+                <button type="button" data-tetris="rotate" aria-label="Rotate">↻</button>
+                <button type="button" data-tetris="right" aria-label="Move right">→</button>
+                <button type="button" data-tetris="down" aria-label="Move down">↓</button>
+              </div>
+              <small>KEYS: ← → ↓ · ↑ ROTATES</small>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="goal-banner" id="goal-banner" aria-hidden="true">GOOOOOOL!</div>
+      <div class="effect-toast" id="effect-toast" aria-live="polite"></div>
+      <div class="quick-note" id="quick-note" hidden>
+        <input id="quick-note-input" maxlength="48" placeholder="Say something… (10s)" aria-label="Write a temporary note" />
+        <small>ENTER TO DROP · ESC TO CLOSE</small>
+      </div>
+
+      <nav class="controls" aria-label="Portfolio slides">
+        <button class="round-btn" id="draw-toggle" type="button" aria-pressed="false" aria-label="Draw on the wall"><span class="pencil">✎</span></button>
+        <div class="slide-controls">
+          <button class="round-btn" id="prev" type="button" aria-label="Previous slide">↑</button>
+          <div class="counter"><strong id="current">1</strong><span>/</span><span>9</span></div>
+          <button class="round-btn" id="next" type="button" aria-label="Next slide">↓</button>
+        </div>
+      </nav>
+
+      <div class="hint">Scroll · swipe · drag · click the objects</div>
+      <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+    </main>
+
+    <button class="draw-exit" id="draw-exit" type="button" aria-label="Exit drawing mode">× EXIT DRAWING</button>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
