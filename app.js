@@ -11,7 +11,7 @@ const slides=[
 ];
 
 const $=s=>document.querySelector(s),titleEl=$("#typed-title"),bodyEl=$("#typed-body"),eyebrowEl=$("#eyebrow"),ctaEl=$("#card-cta"),currentEl=$("#current"),progressEl=$("#progress-bar"),prevBtn=$("#prev"),nextBtn=$("#next"),deck=$(".deck"),prefersReduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
-let index=0,typingToken=0,wheelLocked=false,touchStartY=0;
+let index=0,typingToken=0,wheelLocked=false,touchStartY=0,touchSwipeActive=false,pinchActive=false;
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 
 async function typeText(el,text,speed,token){el.textContent="";if(prefersReduced){el.textContent=text;return}for(let i=0;i<text.length;i++){if(token!==typingToken)return;el.textContent+=text[i];await wait(speed+Math.random()*speed*.55)}}
@@ -27,7 +27,7 @@ function step(delta){renderSlide(Math.max(0,Math.min(slides.length-1,index+delta
 prevBtn.addEventListener("click",()=>step(-1));nextBtn.addEventListener("click",()=>step(1));ctaEl.addEventListener("click",e=>{if(slides[index].href==="#next"){e.preventDefault();step(1)}});
 addEventListener("keydown",e=>{if(e.target.matches("input,textarea,button")||!$("#modal-layer").hidden)return;if(["ArrowDown","ArrowRight","PageDown"," "].includes(e.key)){e.preventDefault();step(1)}if(["ArrowUp","ArrowLeft","PageUp"].includes(e.key)){e.preventDefault();step(-1)}if(e.key==="Home")renderSlide(0,-1);if(e.key==="End")renderSlide(slides.length-1,1)});
 addEventListener("wheel",e=>{if(document.body.classList.contains("drawing")||!$("#modal-layer").hidden||wheelLocked||Math.abs(e.deltaY)<12)return;wheelLocked=true;step(e.deltaY>0?1:-1);setTimeout(()=>wheelLocked=false,720)},{passive:true});
-addEventListener("touchstart",e=>touchStartY=e.touches[0].clientY,{passive:true});addEventListener("touchend",e=>{const d=touchStartY-e.changedTouches[0].clientY;if(Math.abs(d)>55)step(d>0?1:-1)},{passive:true});
+addEventListener("touchstart",e=>{touchSwipeActive=e.touches.length===1&&!pinchActive;if(touchSwipeActive)touchStartY=e.touches[0].clientY},{passive:true});addEventListener("touchend",e=>{if(!touchSwipeActive||pinchActive)return;touchSwipeActive=false;const d=touchStartY-e.changedTouches[0].clientY;if(Math.abs(d)>55)step(d>0?1:-1)},{passive:true});
 
 const stickers=[...document.querySelectorAll(".sticker")];
 
@@ -45,13 +45,13 @@ draggableItems.forEach(item=>{
   let startX=0,startY=0,originX=0,originY=0,targetX=0,targetY=0,moved=false,dragFrame=0;
   const paintDrag=()=>{dragFrame=0;item.dataset.dragX=String(targetX);item.dataset.dragY=String(targetY);item.style.setProperty("--drag-x",`${targetX}px`);item.style.setProperty("--drag-y",`${targetY}px`)};
   item.addEventListener("pointerdown",e=>{
-    if(document.body.classList.contains("drawing")||e.button!==0)return;
+    if(pinchActive||document.body.classList.contains("drawing")||e.button!==0)return;
     if(item.matches(".guestbook-dock")&&e.target.closest("button"))return;
     startX=e.clientX;startY=e.clientY;originX=Number(item.dataset.dragX||0);originY=Number(item.dataset.dragY||0);targetX=originX;targetY=originY;moved=false;
     item.classList.add("is-dragging");item.setPointerCapture(e.pointerId);
   });
   item.addEventListener("pointermove",e=>{
-    if(!item.classList.contains("is-dragging"))return;
+    if(pinchActive||!item.classList.contains("is-dragging"))return;
     const point=e.getCoalescedEvents?.().at(-1)||e,dx=(point.clientX-startX)/sceneZoom,dy=(point.clientY-startY)/sceneZoom;if(Math.abs(dx)+Math.abs(dy)>5)moved=true;
     targetX=originX+dx;targetY=originY+dy;if(!dragFrame)dragFrame=requestAnimationFrame(paintDrag);
   });
@@ -97,15 +97,37 @@ setSceneZoom(innerWidth<=760?.82:1);
 const panBlockers="button,a,input,textarea,.sticker,.portrait-wrap,.glasses-wrap,.deck,.controls,.zoom-tools,.guestbook-dock,.guestbook-launch,.visitor-pill,.availability,.brand-stamp,.social-popover,.quick-note,.wall-note,.modal-layer";
 document.body.classList.add("can-pan");
 stage.addEventListener("pointerdown",e=>{if(e.button!==0||document.body.classList.contains("drawing")||e.target.closest(panBlockers))return;panActive=true;panMoved=false;panStartX=e.clientX;panStartY=e.clientY;panOriginX=sceneX;panOriginY=sceneY;document.body.classList.add("panning");stage.setPointerCapture(e.pointerId)});
-stage.addEventListener("pointermove",e=>{if(!panActive)return;const dx=e.clientX-panStartX,dy=e.clientY-panStartY;if(Math.abs(dx)+Math.abs(dy)>5)panMoved=true;sceneX=panOriginX+dx;sceneY=panOriginY+dy;syncSceneView()});
+stage.addEventListener("pointermove",e=>{if(pinchActive||!panActive)return;const dx=e.clientX-panStartX,dy=e.clientY-panStartY;if(Math.abs(dx)+Math.abs(dy)>5)panMoved=true;sceneX=panOriginX+dx;sceneY=panOriginY+dy;syncSceneView()});
 function endPan(e){if(!panActive)return;panActive=false;panJustMoved=panMoved;document.body.classList.remove("panning");if(stage.hasPointerCapture?.(e.pointerId))stage.releasePointerCapture(e.pointerId);setTimeout(()=>panJustMoved=false,0)}
 stage.addEventListener("pointerup",endPan);stage.addEventListener("pointercancel",endPan);
+
+// Native two-finger scene zoom on phones and tablets. The point between the
+// fingers stays anchored, so pinching also feels natural after the wall moves.
+let pinchDistance=0,pinchZoom=1,pinchWorldX=0,pinchWorldY=0;
+const touchDistance=touches=>Math.hypot(touches[0].clientX-touches[1].clientX,touches[0].clientY-touches[1].clientY);
+const touchMidpoint=touches=>({x:(touches[0].clientX+touches[1].clientX)/2,y:(touches[0].clientY+touches[1].clientY)/2});
+stage.addEventListener("touchstart",e=>{
+  if(e.touches.length!==2||!modalLayer.hidden)return;
+  e.preventDefault();pinchActive=true;touchSwipeActive=false;panActive=false;document.body.classList.remove("panning");
+  document.querySelectorAll(".is-dragging").forEach(item=>item.classList.remove("is-dragging"));
+  pinchDistance=touchDistance(e.touches);pinchZoom=sceneZoom;
+  const mid=touchMidpoint(e.touches),cx=innerWidth/2,cy=innerHeight/2;
+  pinchWorldX=cx+(mid.x-cx-sceneX)/sceneZoom;pinchWorldY=cy+(mid.y-cy-sceneY)/sceneZoom;
+},{passive:false,capture:true});
+stage.addEventListener("touchmove",e=>{
+  if(!pinchActive||e.touches.length!==2)return;
+  e.preventDefault();const mid=touchMidpoint(e.touches),cx=innerWidth/2,cy=innerHeight/2;
+  const nextZoom=Math.max(.1,Math.min(1.4,pinchZoom*(touchDistance(e.touches)/pinchDistance)));
+  sceneX=mid.x-cx-nextZoom*(pinchWorldX-cx);sceneY=mid.y-cy-nextZoom*(pinchWorldY-cy);setSceneZoom(nextZoom);
+},{passive:false,capture:true});
+const endPinch=e=>{if(!pinchActive)return;if(e.touches.length<2){pinchActive=false;touchSwipeActive=false;panJustMoved=true;setTimeout(()=>panJustMoved=false,120)}};
+stage.addEventListener("touchend",endPinch,{passive:true,capture:true});stage.addEventListener("touchcancel",endPinch,{passive:true,capture:true});
 
 // Modal system used by the MacBook, headphones, Polaroid, dinosaur,
 // controller and guestbook.
 const modalLayer=$("#modal-layer"),allModals=[...document.querySelectorAll(".site-modal")],musicPlayer=$("#music-player"),musicToggle=$("#music-toggle"),audioState=$("#audio-state");let musicPlaying=false;
 function openModal(id){closePopover();allModals.forEach(modal=>modal.hidden=modal.id!==id);modalLayer.classList.toggle("photo-open",id==="photo-modal");modalLayer.hidden=false;document.body.classList.add("modal-open");setTimeout(()=>document.querySelector(`#${id} input, #${id} textarea, #${id} button:not(.modal-close)`)?.focus(),80)}
-function closeModal(){modalLayer.hidden=true;modalLayer.classList.remove("photo-open");allModals.forEach(modal=>modal.hidden=true);document.body.classList.remove("modal-open");musicPlayer.innerHTML="";setMusicState(false);stopGame()}
+function closeModal(){if(musicPlaying)sendMusicCommand("pauseVideo");modalLayer.hidden=true;modalLayer.classList.remove("photo-open");allModals.forEach(modal=>modal.hidden=true);document.body.classList.remove("modal-open");setMusicState(false);stopGame()}
 modalLayer.addEventListener("click",e=>{if(e.target===modalLayer||e.target.closest(".modal-close,.modal-dismiss"))closeModal()});
 addEventListener("keydown",e=>{if(e.key==="Escape"&&!modalLayer.hidden)closeModal()});
 
@@ -120,7 +142,7 @@ contactForm.addEventListener("submit",e=>{
 
 function setMusicState(playing){musicPlaying=playing;musicToggle.classList.toggle("is-playing",playing);musicToggle.setAttribute("aria-label",playing?"Pause Yukon":"Play Yukon");audioState.textContent=playing?"PLAYING · TAP THE RECORD TO PAUSE":"PAUSED · TAP THE RECORD TO PLAY"}
 function sendMusicCommand(func){const frame=musicPlayer.querySelector("iframe");frame?.contentWindow?.postMessage(JSON.stringify({event:"command",func,args:[]}),"*")}
-function openMusic(){openModal("music-modal");musicPlayer.innerHTML='<iframe title="YUKON by Justin Bieber — official audio" allow="autoplay; encrypted-media" src="https://www.youtube.com/embed/PNpsJ--XGOo?autoplay=1&rel=0&enablejsapi=1&playsinline=1"></iframe>';setMusicState(true)}
+function openMusic(){openModal("music-modal");sendMusicCommand("playVideo");setMusicState(true)}
 musicToggle.addEventListener("click",()=>{musicPlaying?sendMusicCommand("pauseVideo"):sendMusicCommand("playVideo");setMusicState(!musicPlaying)});
 
 // A page-turning local guestbook inspired by a physical visitor book. Visitor
@@ -175,7 +197,7 @@ function showToast(text){effectToast.textContent=text;effectToast.classList.remo
 // Ten-second notes can be dropped on empty parts of the black wall.
 const quickNote=$("#quick-note"),quickNoteInput=$("#quick-note-input");let noteX=0,noteY=0;
 document.addEventListener("click",e=>{
-  if(panJustMoved||document.body.classList.contains("drawing")||!modalLayer.hidden||e.target.closest(".sticker,.portrait-wrap,.glasses-wrap,.deck,.controls,.zoom-tools,.guestbook-dock,.guestbook-launch,.visitor-pill,.availability,.brand-stamp,.social-popover,.quick-note,.wall-note"))return;
+  if(matchMedia("(max-width:760px), (pointer:coarse)").matches||panJustMoved||document.body.classList.contains("drawing")||!modalLayer.hidden||e.target.closest(".sticker,.portrait-wrap,.glasses-wrap,.deck,.controls,.zoom-tools,.guestbook-dock,.guestbook-launch,.visitor-pill,.availability,.brand-stamp,.social-popover,.quick-note,.wall-note"))return;
   noteX=e.clientX;noteY=e.clientY;quickNote.style.left=`${Math.max(12,Math.min(noteX-40,innerWidth-470))}px`;quickNote.style.top=`${Math.max(12,Math.min(noteY-30,innerHeight-100))}px`;quickNote.hidden=false;quickNoteInput.value="";quickNoteInput.focus();
 });
 quickNoteInput.addEventListener("keydown",e=>{if(e.key==="Escape"){quickNote.hidden=true;return}if(e.key!=="Enter")return;const value=quickNoteInput.value.trim();if(!value)return;dropWallNote(value,noteX,noteY);quickNote.hidden=true});
