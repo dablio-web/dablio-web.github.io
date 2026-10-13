@@ -11,7 +11,7 @@ const slides=[
 ];
 
 const $=s=>document.querySelector(s),titleEl=$("#typed-title"),bodyEl=$("#typed-body"),eyebrowEl=$("#eyebrow"),ctaEl=$("#card-cta"),currentEl=$("#current"),progressEl=$("#progress-bar"),prevBtn=$("#prev"),nextBtn=$("#next"),deck=$(".deck"),prefersReduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
-let index=0,typingToken=0,wheelLocked=false,touchStartY=0,touchSwipeActive=false,pinchActive=false;
+let index=0,typingToken=0,pinchActive=false;
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 
 async function typeText(el,text,speed,token){el.textContent="";if(prefersReduced){el.textContent=text;return}for(let i=0;i<text.length;i++){if(token!==typingToken)return;el.textContent+=text[i];await wait(speed+Math.random()*speed*.55)}}
@@ -25,11 +25,12 @@ async function renderSlide(nextIndex,direction=1){
 }
 function step(delta){renderSlide(Math.max(0,Math.min(slides.length-1,index+delta)),delta)}
 prevBtn.addEventListener("click",()=>step(-1));nextBtn.addEventListener("click",()=>step(1));ctaEl.addEventListener("click",e=>{if(slides[index].href==="#next"){e.preventDefault();step(1)}});
+$(".active-card").addEventListener("click",e=>{if(e.target.closest("a,button")||index>=slides.length-1)return;step(1)});
 addEventListener("keydown",e=>{if(e.target.matches("input,textarea,button")||!$("#modal-layer").hidden)return;if(["ArrowDown","ArrowRight","PageDown"," "].includes(e.key)){e.preventDefault();step(1)}if(["ArrowUp","ArrowLeft","PageUp"].includes(e.key)){e.preventDefault();step(-1)}if(e.key==="Home")renderSlide(0,-1);if(e.key==="End")renderSlide(slides.length-1,1)});
-addEventListener("wheel",e=>{if(document.body.classList.contains("drawing")||!$("#modal-layer").hidden||wheelLocked||Math.abs(e.deltaY)<12)return;wheelLocked=true;step(e.deltaY>0?1:-1);setTimeout(()=>wheelLocked=false,720)},{passive:true});
-addEventListener("touchstart",e=>{touchSwipeActive=e.touches.length===1&&!pinchActive;if(touchSwipeActive)touchStartY=e.touches[0].clientY},{passive:true});addEventListener("touchend",e=>{if(!touchSwipeActive||pinchActive)return;touchSwipeActive=false;const d=touchStartY-e.changedTouches[0].clientY;if(Math.abs(d)>55)step(d>0?1:-1)},{passive:true});
 
 const stickers=[...document.querySelectorAll(".sticker")];
+stickers.forEach(item=>item.addEventListener("animationend",e=>{if(e.animationName==="sticker-in")item.classList.add("entrance-complete")},{once:true}));
+[$(".portrait-wrap"),$(".glasses-wrap")].forEach(item=>item?.addEventListener("animationend",e=>{if(e.animationName.endsWith("-in"))item.classList.add("entrance-complete")},{once:true}));
 
 // These objects used to sit in a fixed UI layer. Keeping them inside the
 // collage makes them pan, zoom and drag with the rest of the wall.
@@ -48,6 +49,7 @@ draggableItems.forEach(item=>{
     if(pinchActive||document.body.classList.contains("drawing")||e.button!==0)return;
     if(item.matches(".guestbook-dock")&&e.target.closest("button"))return;
     startX=e.clientX;startY=e.clientY;originX=Number(item.dataset.dragX||0);originY=Number(item.dataset.dragY||0);targetX=originX;targetY=originY;moved=false;
+    if(item.matches(".guestbook-dock"))document.body.classList.add("dragging-guestbook");
     item.classList.add("is-dragging");item.setPointerCapture(e.pointerId);
   });
   item.addEventListener("pointermove",e=>{
@@ -55,7 +57,7 @@ draggableItems.forEach(item=>{
     const point=e.getCoalescedEvents?.().at(-1)||e,dx=(point.clientX-startX)/sceneZoom,dy=(point.clientY-startY)/sceneZoom;if(Math.abs(dx)+Math.abs(dy)>5)moved=true;
     targetX=originX+dx;targetY=originY+dy;if(!dragFrame)dragFrame=requestAnimationFrame(paintDrag);
   });
-  const stop=e=>{if(dragFrame){cancelAnimationFrame(dragFrame);paintDrag()}if(item.hasPointerCapture?.(e.pointerId))item.releasePointerCapture(e.pointerId);item.classList.remove("is-dragging");if(moved)item.dataset.suppressClick="true"};
+  const stop=e=>{if(dragFrame){cancelAnimationFrame(dragFrame);paintDrag()}if(item.hasPointerCapture?.(e.pointerId))item.releasePointerCapture(e.pointerId);item.classList.remove("is-dragging");if(item.matches(".guestbook-dock"))document.body.classList.remove("dragging-guestbook");if(moved)item.dataset.suppressClick="true"};
   item.addEventListener("pointerup",stop);item.addEventListener("pointercancel",stop);
   item.addEventListener("click",e=>{if(item.dataset.suppressClick==="true"){e.preventDefault();e.stopImmediatePropagation();item.dataset.suppressClick="false"}},true);
 });
@@ -77,7 +79,7 @@ function openPopover(anchor){
   const rect=anchor.getBoundingClientRect(),boxWidth=Math.min(300,innerWidth-32);let left=rect.right+16;if(left+boxWidth>innerWidth-16)left=rect.left-boxWidth-16;left=Math.max(16,Math.min(left,innerWidth-boxWidth-16));let top=Math.max(16,Math.min(rect.top-8,innerHeight-220));popover.style.left=`${left}px`;popover.style.top=`${top}px`;
 }
 stickers.forEach(item=>item.addEventListener("click",e=>{
-  if(!item.matches(".s-plane,.s-football,.s-sun,.s-camera,.s-dog,.s-brazil"))replayIconAnimation(item);
+  if(!item.matches(".linked,.s-plane,.s-football,.s-sun,.s-camera,.s-headphones,.s-polaroid,.s-macbook,.s-dino,.s-controller,.s-dog,.s-brazil"))replayIconAnimation(item);
   if(item.matches("a.linked")){e.preventDefault();e.stopPropagation();openPopover(item)}
 }));
 popoverClose.addEventListener("click",closePopover);popover.addEventListener("click",e=>e.stopPropagation());document.addEventListener("click",e=>{if(!e.target.closest("a.linked"))closePopover()});addEventListener("keydown",e=>{if(e.key==="Escape")closePopover()});
@@ -87,7 +89,7 @@ popoverClose.addEventListener("click",closePopover);popover.addEventListener("cl
 let sceneZoom=1;
 const zoomLabel=$("#zoom-label"),zoomOut=$("#zoom-out"),zoomIn=$("#zoom-in");
 function syncSceneView(){document.documentElement.style.setProperty("--scene-scale",String(sceneZoom));document.documentElement.style.setProperty("--scene-x",`${sceneX}px`);document.documentElement.style.setProperty("--scene-y",`${sceneY}px`);document.documentElement.style.setProperty("--grid-size",`${Math.max(14,48*sceneZoom)}px`);document.documentElement.style.setProperty("--grid-x",`calc(50% + ${sceneX}px)`);document.documentElement.style.setProperty("--grid-y",`calc(50% + ${sceneY}px)`);const paths=$("#draw-paths");if(paths){const cx=innerWidth/2,cy=innerHeight/2;paths.setAttribute("transform",`translate(${sceneX} ${sceneY}) translate(${cx} ${cy}) scale(${sceneZoom}) translate(${-cx} ${-cy})`)}}
-function setSceneZoom(next){sceneZoom=Math.max(.1,Math.min(1.4,Number(next.toFixed(2))));syncSceneView();zoomLabel.textContent=`${Math.round(sceneZoom*100)}%`;zoomOut.disabled=sceneZoom<=.1;zoomIn.disabled=sceneZoom>=1.4}
+function setSceneZoom(next){sceneZoom=Math.max(.1,Math.min(1.4,next));syncSceneView();zoomLabel.textContent=`${Math.round(sceneZoom*100)}%`;zoomOut.disabled=sceneZoom<=.1001;zoomIn.disabled=sceneZoom>=1.3999}
 zoomOut.addEventListener("click",e=>{e.stopPropagation();setSceneZoom(sceneZoom-.1)});
 zoomIn.addEventListener("click",e=>{e.stopPropagation();setSceneZoom(sceneZoom+.1)});
 
@@ -108,7 +110,7 @@ const touchDistance=touches=>Math.hypot(touches[0].clientX-touches[1].clientX,to
 const touchMidpoint=touches=>({x:(touches[0].clientX+touches[1].clientX)/2,y:(touches[0].clientY+touches[1].clientY)/2});
 stage.addEventListener("touchstart",e=>{
   if(e.touches.length!==2||!modalLayer.hidden)return;
-  e.preventDefault();pinchActive=true;touchSwipeActive=false;panActive=false;document.body.classList.remove("panning");
+  e.preventDefault();pinchActive=true;panActive=false;document.body.classList.remove("panning");
   document.querySelectorAll(".is-dragging").forEach(item=>item.classList.remove("is-dragging"));
   pinchDistance=touchDistance(e.touches);pinchZoom=sceneZoom;
   const mid=touchMidpoint(e.touches),cx=innerWidth/2,cy=innerHeight/2;
@@ -120,7 +122,7 @@ stage.addEventListener("touchmove",e=>{
   const nextZoom=Math.max(.1,Math.min(1.4,pinchZoom*(touchDistance(e.touches)/pinchDistance)));
   sceneX=mid.x-cx-nextZoom*(pinchWorldX-cx);sceneY=mid.y-cy-nextZoom*(pinchWorldY-cy);setSceneZoom(nextZoom);
 },{passive:false,capture:true});
-const endPinch=e=>{if(!pinchActive)return;if(e.touches.length<2){pinchActive=false;touchSwipeActive=false;panJustMoved=true;setTimeout(()=>panJustMoved=false,120)}};
+const endPinch=e=>{if(!pinchActive)return;if(e.touches.length<2){pinchActive=false;panJustMoved=true;setTimeout(()=>panJustMoved=false,120)}};
 stage.addEventListener("touchend",endPinch,{passive:true,capture:true});stage.addEventListener("touchcancel",endPinch,{passive:true,capture:true});
 
 // Modal system used by the MacBook, headphones, Polaroid, dinosaur,
@@ -177,6 +179,7 @@ const galleryPhotos=[
   {src:"./assets/gallery-spain.jpg",alt:"Wander with friends at the Spain border sign"},
   {src:"./assets/gallery-style.jpg",alt:"Wander on a white terrace in Portugal"}
 ];
+galleryPhotos.forEach(photo=>{const preload=new Image();preload.src=photo.src});
 let galleryIndex=0;
 function renderGalleryPhoto(){const photo=galleryPhotos[galleryIndex],image=$("#gallery-image"),card=$("#polaroid-gallery");card.classList.remove("changing");void card.offsetWidth;image.src=photo.src;image.alt=photo.alt;card.classList.add("changing")}
 function resetRepsAfterRest(){clearTimeout(repResetTimer);repResetTimer=setTimeout(()=>{reps=0;$("#rep-counter").textContent="0 REPS"},30*60*1000)}
@@ -189,7 +192,7 @@ $(".s-dino").addEventListener("click",()=>openModal("error-modal"));
 $(".s-controller").addEventListener("click",()=>openModal("game-modal"));
 sun.addEventListener("click",()=>sun.classList.toggle("spinning"));
 gym.addEventListener("click",()=>{reps++;resetRepsAfterRest();$("#rep-counter").textContent=`${reps} ${reps===1?"REP":"REPS"}`;showToast(`REP ${reps}  💪`)});
-football.addEventListener("click",()=>{football.classList.remove("goal-flight");$("#goal-banner").classList.remove("active");void football.offsetWidth;football.classList.add("goal-flight");$("#goal-banner").classList.add("active");setTimeout(()=>{football.classList.remove("goal-flight");$("#goal-banner").classList.remove("active")},1750)});
+football.addEventListener("click",()=>{football.classList.remove("goal-flight");$("#goal-banner").classList.remove("active");void football.offsetWidth;football.classList.add("goal-flight");$("#goal-banner").classList.add("active");setTimeout(()=>{$("#goal-banner").classList.remove("active");football.classList.remove("goal-flight")},1750)});
 
 const effectToast=$("#effect-toast");
 function showToast(text){effectToast.textContent=text;effectToast.classList.remove("show");void effectToast.offsetWidth;effectToast.classList.add("show")}
