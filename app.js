@@ -175,13 +175,13 @@ guestForm.addEventListener("submit",e=>{e.preventDefault();const name=$("#guest-
 // Individual object reactions.
 const plane=$(".s-plane"),football=$(".s-football"),sun=$(".s-sun"),gym=$(".s-camera");let reps=0,repResetTimer=null;
 const galleryPhotos=[
-  {src:"./assets/gallery-desert.jpg",alt:"Wander riding a camel in the desert"},
-  {src:"./assets/gallery-spain.jpg",alt:"Wander with friends at the Spain border sign"},
-  {src:"./assets/gallery-style.jpg",alt:"Wander on a white terrace in Portugal"}
+  {src:"./assets/gallery-desert.jpg",alt:"Wander riding a camel in the desert",orientation:"landscape"},
+  {src:"./assets/gallery-spain.jpg",alt:"Wander with friends at the Spain border sign",orientation:"portrait"},
+  {src:"./assets/gallery-style.jpg",alt:"Wander on a white terrace in Portugal",orientation:"landscape"}
 ];
 galleryPhotos.forEach(photo=>{const preload=new Image();preload.src=photo.src});
 let galleryIndex=0;
-function renderGalleryPhoto(){const photo=galleryPhotos[galleryIndex],image=$("#gallery-image"),card=$("#polaroid-gallery");card.classList.remove("changing");void card.offsetWidth;image.src=photo.src;image.alt=photo.alt;card.classList.add("changing")}
+function renderGalleryPhoto(){const photo=galleryPhotos[galleryIndex],image=$("#gallery-image"),card=$("#polaroid-gallery");card.classList.remove("changing","is-portrait","is-landscape");card.classList.add(`is-${photo.orientation}`);void card.offsetWidth;image.src=photo.src;image.alt=photo.alt;card.classList.add("changing")}
 function resetRepsAfterRest(){clearTimeout(repResetTimer);repResetTimer=setTimeout(()=>{reps=0;$("#rep-counter").textContent="0 REPS"},30*60*1000)}
 plane.addEventListener("click",()=>{plane.classList.remove("flying");void plane.offsetWidth;plane.classList.add("flying");setTimeout(()=>plane.classList.remove("flying"),1520)});
 $(".s-headphones").addEventListener("click",openMusic);
